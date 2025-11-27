@@ -313,6 +313,14 @@ public class Program
 
         #endregion
 
+        #region Health Check Endpoint
+
+        // Simple endpoint for Render / monitoring
+        app.MapGet("/health", () =>
+            Results.Ok("Healthy – Sudheer Eco Plates API running fine!"));
+
+        #endregion
+
         app.Run();
     }
 
