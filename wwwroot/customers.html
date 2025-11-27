@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customers – Sudheer Eco Plates</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h2>👥 Customer Management</h2>
+  <nav>
+    <a href="index.html">🏠 Home</a> |
+    <a href="orders.html">🛒 Orders</a>
+  </nav>
+
+  <section>
+    <h3>Add New Customer</h3>
+    <form id="customerForm">
+      <input type="text" id="name" placeholder="Name" required>
+      <input type="text" id="phone" placeholder="Phone" required>
+      <input type="text" id="address" placeholder="Address" required>
+      <button type="submit">Add Customer</button>
+    </form>
+  </section>
+
+  <hr>
+
+  <section>
+    <h3>Existing Customers</h3>
+    <table id="customerTable">
+      <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Address</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <script>
+    const api = '/api/customers';
+    async function loadCustomers() {
+      const res = await fetch(api);
+      const data = await res.json();
+      const tbody = document.querySelector('#customerTable tbody');
+      tbody.innerHTML = '';
+      data.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.address}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    document.getElementById('customerForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const c = {
+        name: name.value, phone: phone.value, address: address.value
+      };
+      await fetch(api, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(c)
+      });
+      e.target.reset(); loadCustomers();
+    });
+    window.onload = loadCustomers;
+  </script>
+</body>
+</html>

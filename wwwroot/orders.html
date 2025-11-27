@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Orders – Sudheer Eco Plates</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h2>🛒 Orders Management</h2>
+  <nav>
+    <a href="index.html">🏠 Home</a> |
+    <a href="customers.html">👥 Customers</a> |
+    <a href="stock.html">📦 Stock</a>
+  </nav>
+
+  <section>
+    <h3>Create New Order</h3>
+    <form id="orderForm">
+      <label>Customer:</label>
+      <select id="customerId" required></select><br>
+      <label>Item:</label>
+      <select id="itemId" required></select><br>
+      <label>Quantity:</label>
+      <input type="number" id="quantity" min="1" required><br>
+      <label>Unit Price (₹):</label>
+      <input type="number" id="unitPrice" step="0.01" required><br>
+      <button type="submit">Create Order</button>
+    </form>
+  </section>
+
+  <hr>
+
+  <section>
+    <h3>📋 All Orders</h3>
+    <table id="ordersTable">
+      <thead>
+        <tr><th>ID</th><th>Customer</th><th>Item</th><th>Qty</th><th>Price (₹)</th><th>Date</th><th>Invoice</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <script src="js/orders.js"></script>
+</body>
+</html>

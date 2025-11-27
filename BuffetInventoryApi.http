@@ -1,0 +1,6 @@
+@BuffetInventoryApi_HostAddress = http://localhost:5159
+
+GET {{BuffetInventoryApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

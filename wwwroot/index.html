@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AS Eco Plates · Business Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(135deg, rgba(0,0,0,0.80), rgba(0,0,0,0.85)),
+        url("plates-bg.jpg") center/cover no-repeat fixed;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px 10px;
+    }
+
+    .frame {
+      width: 100%;
+      max-width: 1280px;
+      border-radius: 28px;
+      padding: 2px;
+      background: linear-gradient(145deg, #22c55e, #eab308, #22c55e);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 24px 60px rgba(0,0,0,0.85);
+    }
+
+    .shell {
+      border-radius: 26px;
+      background: radial-gradient(circle at top left, rgba(34,197,94,0.12), transparent 50%),
+                  radial-gradient(circle at bottom right, rgba(234,179,8,0.16), transparent 55%),
+                  rgba(15,23,42,0.96);
+      padding: 22px 26px 26px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 26px;
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 25% 20%, #facc15, #16a34a);
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 0 4px rgba(15,23,42,0.85),
+        0 10px 40px rgba(0,0,0,0.9);
+      overflow: hidden;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(250,204,21,0.9);
+    }
+
+    .title-block h1 {
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #f9fafb;
+    }
+
+    .title-block h1 span {
+      color: #22c55e;
+    }
+
+    .title-block p {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-top: 3px;
+    }
+
+    .title-meta {
+      margin-left: auto;
+      text-align: right;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .title-meta .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(34,197,94,0.6);
+      color: #bbf7d0;
+      font-weight: 500;
+    }
+
+    .title-meta .badge span.icon {
+      font-size: 1rem;
+    }
+
+    .title-meta .stack {
+      margin-top: 6px;
+    }
+
+    .title-meta .stack span {
+      opacity: 0.8;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 6px;
+      margin-top: 14px;
+      margin-bottom: 16px;
+      background: rgba(15,23,42,0.95);
+      border-radius: 999px;
+      padding: 3px;
+      border: 1px solid rgba(51,65,85,0.9);
+    }
+
+    .tab-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      background: transparent;
+      color: #9ca3af;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.16s ease-out;
+    }
+
+    .tab-btn span.emoji {
+      font-size: 1rem;
+    }
+
+    .tab-btn.active {
+      background: radial-gradient(circle at top left, rgba(34,197,94,0.5), rgba(15,118,110,0.7));
+      color: #ecfdf5;
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.8),
+        0 10px 24px rgba(15,118,110,0.7);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: rgba(31,41,55,0.9);
+      color: #e5e7eb;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+      gap: 18px;
+      align-items: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .title-meta {
+        display: none;
+      }
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(30,64,175,0.16), transparent 60%),
+                  rgba(15,23,42,0.96);
+      border-radius: 20px;
+      padding: 14px 16px 16px 16px;
+      border: 1px solid rgba(51,65,85,0.95);
+      box-shadow:
+        0 14px 40px rgba(0,0,0,0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .card-title span.icon {
+      font-size: 1.1rem;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
+    .badge-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.9);
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    h3.section-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #d1d5db;
+      margin: 10px 0 6px 0;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    form.full-width {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.8rem;
+    }
+
+    .field label {
+      color: #9ca3af;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      border-radius: 10px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.92);
+      color: #e5e7eb;
+      padding: 7px 9px;
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 52px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.7);
+      background: rgba(15,23,42,0.98);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      grid-column: 1 / -1;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #22c55e, #15803d);
+      color: #ecfdf5;
+      box-shadow: 0 8px 18px rgba(22,163,74,0.7);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      border: 1px solid rgba(55,65,81,0.8);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(31,41,55,0.95);
+    }
+
+    .btn-danger {
+      background: radial-gradient(circle at top left, #ef4444, #b91c1c);
+      color: #fee2e2;
+      box-shadow: 0 8px 18px rgba(185,28,28,0.7);
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin-top: 6px;
+      background: rgba(15,23,42,0.96);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(31,41,55,0.9);
+    }
+
+    thead {
+      background: linear-gradient(90deg, rgba(15,23,42,0.98), rgba(30,64,175,0.65));
+    }
+
+    th, td {
+      padding: 6px 8px;
+      text-align: left;
+    }
+
+    th {
+      font-weight: 600;
+      color: #e5e7eb;
+      border-bottom: 1px solid rgba(31,41,55,0.9);
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(15,23,42,0.96);
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(15,23,42,0.90);
+    }
+
+    tbody tr:hover {
+      background: rgba(30,64,175,0.35);
+    }
+
+    td {
+      color: #d1d5db;
+      vertical-align: middle;
+    }
+
+    .status-ok {
+      color: #bbf7d0;
+    }
+    .status-low {
+      color: #f97316;
+      font-weight: 600;
+    }
+
+    .pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(55,65,81,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .pill-income {
+      border-color: rgba(22,163,74,0.9);
+      color: #bbf7d0;
+    }
+
+    .pill-expense {
+      border-color: rgba(220,38,38,0.9);
+      color: #fecaca;
+    }
+
+    .text-muted {
+      color: #9ca3af;
+      font-size: 0.78rem;
+    }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 0.7rem;
+      color: #6b7280;
+      text-align: right;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* 🔹 Summary chips clickable styling */
+    .summary-chip {
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(17,24,39,0.9);
+      border: 1px solid rgba(55,65,81,0.9);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.82rem;
+      transition: background 0.15s ease-out, border-color 0.15s ease-out, transform 0.08s;
+    }
+
+    .summary-chip:hover {
+      background: rgba(31,41,55,0.98);
+      border-color: rgba(34,197,94,0.7);
+      transform: translateY(-1px);
+    }
+
+    .summary-chip span.icon {
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="shell">
+      <header class="header">
+        <div class="logo-wrap">
+          <!-- Replace with your own logo file in wwwroot/sudheer-logo.png -->
+          <img src="sudheer-logo.png" alt="Sudheer Eco Plates Logo" />
+        </div>
+        <div class="title-block">
+          <h1><span>Sudheer</span> Eco Plates</h1>
+          <p>Buffet & eco-friendly plates · Inventory · Orders · Expenses</p>
+        </div>
+        <div class="title-meta">
+          <div class="badge">
+            <span class="icon">🧾</span>
+            <span>Internal Business Dashboard</span>
+          </div>
+          <div class="stack">
+            <span>.NET · SQLite · Swagger · Custom Web UI</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- 🔹 Daily Summary Bar (now clickable) -->
+      <div id="dailySummary" style="
+        margin-bottom:14px;
+        background:rgba(17,24,39,0.98);
+        border-radius:14px;
+        padding:8px 12px;
+        border:1px solid rgba(55,65,81,0.95);
+        color:#e5e7eb;
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px 18px;
+        font-size:0.85rem;
+        align-items:center;
+        justify-content:space-between;
+        box-shadow:0 10px 30px rgba(0,0,0,0.75);
+      ">
+        <span id="sumDate">📅 Today</span>
+
+        <span id="sumOrders"
+              class="summary-chip"
+              data-tab="customers"
+              data-filter="orders-today">
+          <span class="icon">🧾</span>
+          <span class="label">Orders: –</span>
+        </span>
+
+        <span id="sumSales"
+              class="summary-chip"
+              data-tab="customers"
+              data-filter="orders-today">
+          <span class="icon">💰</span>
+          <span class="label">Sales: ₹ –</span>
+        </span>
+
+        <span id="sumExpenses"
+              class="summary-chip"
+              data-tab="expenses"
+              data-filter="expenses-today">
+          <span class="icon">💸</span>
+          <span class="label">Expenses: ₹ –</span>
+        </span>
+
+        <span id="sumSalary"
+              class="summary-chip"
+              data-tab="expenses"
+              data-filter="expenses-today">
+          <span class="icon">👷‍♂️</span>
+          <span class="label">Salary: ₹ –</span>
+        </span>
+
+        <span id="sumProfit"
+              class="summary-chip"
+              data-tab="expenses"
+              data-filter="expenses-today">
+          <span class="icon">🏦</span>
+          <span class="label">Profit: ₹ –</span>
+        </span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="inventory">
+          <span class="emoji">📦</span> Inventory
+        </button>
+        <button class="tab-btn" data-tab="customers">
+          <span class="emoji">👥</span> Customers & Orders
+        </button>
+        <button class="tab-btn" data-tab="expenses">
+          <span class="emoji">💰</span> Expenses
+        </button>
+      </div>
+
+      <!-- INVENTORY TAB -->
+      <section id="tab-inventory" class="tab-section">
+        <div class="layout">
+          <!-- Left column: Items & Stock Movement -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">📋</span> Items & Stock Movement
+              </div>
+              <span class="badge-pill">Plates · Glasses · Table Rolls</span>
+            </div>
+
+            <!-- Add / Edit Item -->
+            <h3 class="section-label">Item Master</h3>
+            <p class="card-sub">Create or update items for plates, glasses, or table rolls.</p>
+            <form id="itemForm">
+              <input type="hidden" id="itemId" />
+              <div class="field">
+                <label for="itemName">Item Name</label>
+                <input id="itemName" type="text" placeholder='e.g., Buffet Plate 12" Eco' />
+              </div>
+              <div class="field">
+                <label for="itemCategory">Category</label>
+                <select id="itemCategory">
+                  <option value="FinishedProduct">Finished Product</option>
+                  <option value="PurchasedMaterial">Purchased Material</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="itemUnit">Unit</label>
+                <select id="itemUnit">
+                  <option value="Pieces">Pieces</option>
+                  <option value="Rolls">Rolls</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="itemReorderLevel">Reorder Level</label>
+                <input id="itemReorderLevel" type="number" min="0" value="1000" />
+              </div>
+              <div class="button-row">
+                <button type="submit" class="btn-primary">
+                  <span>💾 Save Item</span>
+                </button>
+                <button type="button" class="btn-ghost" onclick="clearItemForm()">
+                  ✖ Clear
+                </button>
+              </div>
+              <p class="text-muted">Tip: Click ✏️ in the stock table to edit an item, 🗑 to delete.</p>
+            </form>
+
+            <!-- Stock movement -->
+            <h3 class="section-label">Stock Movement (IN / OUT)</h3>
+            <p class="card-sub">Record purchases (IN) and dispatch to customers (OUT).</p>
+            <form id="txForm">
+              <div class="field">
+                <label for="txItemId">Item</label>
+                <select id="txItemId"></select>
+              </div>
+              <div class="field">
+                <label for="txType">Type</label>
+                <select id="txType">
+                  <option value="IN">IN – Stock Added</option>
+                  <option value="OUT">OUT – Stock Sent</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="txQuantity">Quantity</label>
+                <input id="txQuantity" type="number" min="1" value="100" />
+              </div>
+              <div class="field">
+                <label for="txReference">Reference</label>
+                <input id="txReference" type="text" placeholder="e.g., Purchase #101, Order #7" />
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label for="txNotes">Notes (optional)</label>
+                <textarea id="txNotes" placeholder="Any extra details about this movement"></textarea>
+              </div>
+              <div class="button-row">
+                <button type="submit" class="btn-primary">
+                  📥 Save Movement
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right column: Stock Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">📊</span> Stock Overview
+              </div>
+              <div class="button-row">
+                <button type="button" class="btn-ghost btn-sm" onclick="loadStock()">
+                  🔄 Refresh
+                </button>
+                <button type="button" class="btn-ghost btn-sm" onclick="exportToExcel()">
+                  📥 Export Excel
+                </button>
+              </div>
+            </div>
+            <p class="card-sub">Live stock for plates, glasses, and table rolls.</p>
+
+            <table id="stockTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Item Name</th>
+                  <th>Unit</th>
+                  <th>Reorder</th>
+                  <th>IN</th>
+                  <th>OUT</th>
+                  <th>Current</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="stockBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- CUSTOMERS & ORDERS TAB -->
+      <section id="tab-customers" class="tab-section hidden">
+        <div class="layout">
+          <!-- Left: Customers -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">👥</span> Customers
+              </div>
+              <span class="badge-pill">Caterers · Tiffin Centers · Function Halls</span>
+            </div>
+
+            <h3 class="section-label">Add Customer</h3>
+            <form id="customerForm">
+              <div class="field">
+                <label for="custName">Name</label>
+                <input id="custName" type="text" placeholder="e.g., Sai Catering Services" />
+              </div>
+              <div class="field">
+                <label for="custPhone">Phone</label>
+                <input id="custPhone" type="text" placeholder="e.g., 9876543210" />
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label for="custAddress">Address</label>
+                <input id="custAddress" type="text" placeholder="Function hall / Area / City" />
+              </div>
+              <div class="button-row">
+                <button type="submit" class="btn-primary">
+                  ➕ Save Customer
+                </button>
+              </div>
+            </form>
+
+            <h3 class="section-label">Customer List</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody id="customersBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Right: Orders -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">🧾</span> Orders
+              </div>
+              <span class="badge-pill" id="ordersFilterLabel">All orders</span>
+            </div>
+
+            <h3 class="section-label">Create Order</h3>
+            <form id="orderForm">
+              <div class="field">
+                <label for="orderCustomer">Customer</label>
+                <select id="orderCustomer"></select>
+              </div>
+              <div class="field">
+                <label for="orderItem">Item</label>
+                <select id="orderItem"></select>
+              </div>
+              <div class="field">
+                <label for="orderQty">Quantity</label>
+                <input id="orderQty" type="number" min="1" value="500" />
+              </div>
+              <div class="field">
+                <label for="orderPrice">Unit Price (₹)</label>
+                <input id="orderPrice" type="number" min="0" step="0.01" value="1.50" />
+              </div>
+              <div class="button-row">
+                <button type="submit" class="btn-primary">
+                  🧾 Save Order & Reduce Stock
+                </button>
+              </div>
+            </form>
+
+            <h3 class="section-label">Recent Orders</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Total (₹)</th>
+                  <th>Invoice</th>
+                </tr>
+              </thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPENSES TAB -->
+      <section id="tab-expenses" class="tab-section hidden">
+        <div class="layout">
+          <!-- Left: Add Expense -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">💰</span> Add Expense
+              </div>
+              <span class="badge-pill">Salary · Materials · Transport · Electricity</span>
+            </div>
+
+            <form id="expenseForm" class="full-width">
+              <div class="field">
+                <label for="expDate">Date</label>
+                <input id="expDate" type="date" />
+              </div>
+              <div class="field">
+                <label for="expCategory">Category</label>
+                <select id="expCategory">
+                  <option value="Salary">Salary</option>
+                  <option value="Materials">Materials</option>
+                  <option value="Electricity">Electricity</option>
+                  <option value="Transport">Transport</option>
+                  <option value="Rent">Rent</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="expAmount">Amount (₹)</label>
+                <input id="expAmount" type="number" min="0" step="0.01" />
+              </div>
+              <div class="field">
+                <label for="expDescription">Description</label>
+                <input id="expDescription" type="text" placeholder="e.g., September salary, diesel for delivery" />
+              </div>
+              <div class="button-row">
+                <button type="submit" class="btn-primary">
+                  💸 Save Expense
+                </button>
+              </div>
+              <p class="card-sub">These expenses are stored in the database via <code>/api/expenses</code>.</p>
+            </form>
+          </div>
+
+          <!-- Right: Recent Expenses -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">📉</span> Recent Expenses
+              </div>
+              <span class="badge-pill" id="expensesFilterLabel">All expenses</span>
+            </div>
+            <p class="card-sub">Last 100 expenses (salary, transport, materials, electricity, etc.).</p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th>Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody id="expensesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        © 2025 Sudheer Eco Plates · Internal business system (local use)
+      </div>
+    </div>
+  </div>
+
+  <script src="js/xlsx.full.min.js"></script>
+  <script>
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabSections = {
+      inventory: document.getElementById("tab-inventory"),
+      customers: document.getElementById("tab-customers"),
+      expenses: document.getElementById("tab-expenses"),
+    };
+
+    function activateTab(tabName) {
+      tabButtons.forEach(b => {
+        b.classList.toggle("active", b.dataset.tab === tabName);
+      });
+      Object.keys(tabSections).forEach(key => {
+        tabSections[key].classList.toggle("hidden", key !== tabName);
+      });
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+        activateTab(tab);
+      });
+    });
+
+    let currentStockData = [];
+
+    async function loadStock() {
+      const res = await fetch("/api/stock");
+      const data = await res.json();
+      currentStockData = data;
+      const body = document.getElementById("stockBody");
+      body.innerHTML = "";
+
+      data.forEach(item => {
+        const tr = document.createElement("tr");
+        const belowReorder = item.belowReorder;
+        tr.innerHTML = `
+          <td>${item.itemId}</td>
+          <td>${item.itemName}</td>
+          <td>${item.unit}</td>
+          <td>${item.reorderLevel}</td>
+          <td>${item.totalIn}</td>
+          <td>${item.totalOut}</td>
+          <td>${item.currentStock}</td>
+          <td class="${belowReorder ? "status-low" : "status-ok"}">
+            ${belowReorder ? "⚠ Reorder Needed" : "✅ OK"}
+          </td>
+          <td>
+            <button class="btn-ghost btn-sm" onclick='editItemFromStock(${JSON.stringify(item.itemId)})'>✏️</button>
+            <button class="btn-danger btn-sm" onclick='deleteItem(${item.itemId})'>🗑</button>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function exportToExcel() {
+      if (!currentStockData.length) {
+        alert("No stock data to export.");
+        return;
+      }
+      const ws = XLSX.utils.json_to_sheet(currentStockData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Stock");
+      XLSX.writeFile(wb, "SudheerEcoPlates_Stock.xlsx");
+    }
+
+    async function loadItemsForSelects() {
+      const res = await fetch("/api/items");
+      const items = await res.json();
+
+      const txSelect = document.getElementById("txItemId");
+      const orderItem = document.getElementById("orderItem");
+
+      txSelect.innerHTML = "";
+      orderItem.innerHTML = "";
+
+      items.forEach(i => {
+        const opt1 = document.createElement("option");
+        opt1.value = i.id;
+        opt1.textContent = `${i.id} – ${i.name}`;
+        txSelect.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = i.id;
+        opt2.textContent = `${i.id} – ${i.name}`;
+        orderItem.appendChild(opt2);
+      });
+    }
+
+    async function editItemFromStock(id) {
+      const res = await fetch("/api/items");
+      const items = await res.json();
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById("itemId").value = item.id;
+      document.getElementById("itemName").value = item.name;
+      document.getElementById("itemCategory").value = item.category;
+      document.getElementById("itemUnit").value = item.unit;
+      document.getElementById("itemReorderLevel").value = item.reorderLevel;
+    }
+
+    async function deleteItem(id) {
+      if (!confirm("Delete this item?")) return;
+      await fetch(`/api/items/${id}`, { method: "DELETE" });
+      await loadStock();
+      await loadItemsForSelects();
+    }
+
+    function clearItemForm() {
+      document.getElementById("itemId").value = "";
+      document.getElementById("itemName").value = "";
+      document.getElementById("itemCategory").value = "FinishedProduct";
+      document.getElementById("itemUnit").value = "Pieces";
+      document.getElementById("itemReorderLevel").value = "1000";
+    }
+
+    document.getElementById("itemForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("itemId").value;
+      const item = {
+        name: document.getElementById("itemName").value,
+        category: document.getElementById("itemCategory").value,
+        unit: document.getElementById("itemUnit").value,
+        reorderLevel: parseInt(document.getElementById("itemReorderLevel").value || "0")
+      };
+
+      if (!item.name) {
+        alert("Item name is required");
+        return;
+      }
+
+      if (id) {
+        await fetch(`/api/items/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item)
+        });
+      } else {
+        await fetch("/api/items", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item)
+        });
+      }
+
+      clearItemForm();
+      await loadStock();
+      await loadItemsForSelects();
+    });
+
+    document.getElementById("txForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const tx = {
+        itemId: parseInt(document.getElementById("txItemId").value),
+        type: document.getElementById("txType").value,
+        quantity: parseInt(document.getElementById("txQuantity").value || "0"),
+        reference: document.getElementById("txReference").value,
+        notes: document.getElementById("txNotes").value
+      };
+
+      if (!tx.itemId || tx.quantity <= 0) {
+        alert("Select an item and enter quantity > 0");
+        return;
+      }
+
+      await fetch("/api/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(tx)
+      });
+
+      e.target.reset();
+      await loadStock();
+    });
+
+    async function loadCustomers() {
+      const res = await fetch("/api/customers");
+      const customers = await res.json();
+
+      const body = document.getElementById("customersBody");
+      const orderCustomer = document.getElementById("orderCustomer");
+
+      body.innerHTML = "";
+      orderCustomer.innerHTML = "";
+
+      customers.forEach(c => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${c.id}</td>
+          <td>${c.name}</td>
+          <td>${c.phone}</td>
+        `;
+        body.appendChild(tr);
+
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = `${c.id} – ${c.name}`;
+        orderCustomer.appendChild(opt);
+      });
+    }
+
+    document.getElementById("customerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const customer = {
+        name: document.getElementById("custName").value,
+        phone: document.getElementById("custPhone").value,
+        address: document.getElementById("custAddress").value
+      };
+      if (!customer.name) {
+        alert("Customer name is required");
+        return;
+      }
+      await fetch("/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer)
+      });
+      e.target.reset();
+      await loadCustomers();
+    });
+
+    async function loadOrders(filterToday = false) {
+      const res = await fetch("/api/orders");
+      const orders = await res.json();
+      const body = document.getElementById("ordersBody");
+      const label = document.getElementById("ordersFilterLabel");
+      body.innerHTML = "";
+
+      let list = orders;
+      if (filterToday) {
+        const today = new Date().toISOString().substring(0, 10);
+        list = orders.filter(o => o.orderDate && o.orderDate.substring(0, 10) === today);
+        label.textContent = "Today only";
+      } else {
+        label.textContent = "All orders";
+      }
+
+      list.forEach(o => {
+        const total = (o.quantity * o.unitPrice).toFixed(2);
+        const dateStr = o.orderDate ? o.orderDate.substring(0, 10) : "";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${o.id}</td>
+          <td>${dateStr}</td>
+          <td>${o.customer ? o.customer.name : ""}</td>
+          <td>${o.item ? o.item.name : ""}</td>
+          <td>${o.quantity}</td>
+          <td>${total}</td>
+          <td>
+            <a href="/api/orders/${o.id}/invoice" target="_blank" class="text-muted">PDF</a>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const order = {
+        customerId: parseInt(document.getElementById("orderCustomer").value),
+        itemId: parseInt(document.getElementById("orderItem").value),
+        quantity: parseInt(document.getElementById("orderQty").value || "0"),
+        unitPrice: parseFloat(document.getElementById("orderPrice").value || "0")
+      };
+
+      if (!order.customerId || !order.itemId || order.quantity <= 0) {
+        alert("Select customer, item, and quantity > 0");
+        return;
+      }
+
+      await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order)
+      });
+
+      e.target.reset();
+      await loadStock();
+      await loadOrders(); // reload all by default
+      await loadDailySummary();
+    });
+
+    document.getElementById("expenseForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const rawDate = document.getElementById("expDate").value;
+      const category = document.getElementById("expCategory").value;
+      const amount = parseFloat(document.getElementById("expAmount").value || "0");
+      const description = document.getElementById("expDescription").value;
+
+      if (amount <= 0) {
+        alert("Amount must be > 0");
+        return;
+      }
+
+      let dateObj;
+      if (rawDate) {
+        dateObj = new Date(rawDate);
+      } else {
+        dateObj = new Date();
+      }
+
+      const payload = {
+        date: dateObj.toISOString(),
+        category,
+        amount,
+        description
+      };
+
+      await fetch("/api/expenses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      e.target.reset();
+      await loadExpenses(); // reload all
+      await loadDailySummary();
+    });
+
+    async function loadExpenses(filterToday = false) {
+      const res = await fetch("/api/expenses");
+      const expenses = await res.json();
+      const body = document.getElementById("expensesBody");
+      const label = document.getElementById("expensesFilterLabel");
+      body.innerHTML = "";
+
+      let list = expenses;
+      if (filterToday) {
+        const today = new Date().toISOString().substring(0, 10);
+        list = expenses.filter(ex => ex.date && ex.date.substring(0, 10) === today);
+        label.textContent = "Today only";
+      } else {
+        label.textContent = "All expenses";
+      }
+
+      list.forEach(ex => {
+        const date = ex.date ? ex.date.substring(0, 10) : "";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${date}</td>
+          <td>${ex.category}</td>
+          <td>${ex.description || ""}</td>
+          <td>${Number(ex.amount).toFixed(2)}</td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    // 🔹 Daily summary loader
+    async function loadDailySummary() {
+      const today = new Date().toISOString().substring(0, 10);
+      const res = await fetch(`/api/summary/daily?date=${today}`);
+      if (!res.ok) return;
+      const s = await res.json();
+
+      document.getElementById("sumDate").textContent =
+        `📅 ${s.date}`;
+      document.querySelector("#sumOrders .label").textContent =
+        `Orders: ${s.totalOrders}`;
+      document.querySelector("#sumSales .label").textContent =
+        `Sales: ₹${s.totalOrderValue.toLocaleString()}`;
+      document.querySelector("#sumExpenses .label").textContent =
+        `Expenses: ₹${s.totalExpenses.toLocaleString()}`;
+      document.querySelector("#sumSalary .label").textContent =
+        `Salary: ₹${s.salaryExpenses.toLocaleString()}`;
+      document.querySelector("#sumProfit .label").textContent =
+        `Profit: ₹${s.profit.toLocaleString()}`;
+    }
+
+    // 🔹 Make summary chips clickable
+    document.querySelectorAll(".summary-chip").forEach(chip => {
+      chip.addEventListener("click", async () => {
+        const tab = chip.dataset.tab;
+        const filter = chip.dataset.filter;
+
+        if (tab) {
+          activateTab(tab);
+        }
+
+        if (filter === "orders-today") {
+          await loadOrders(true);
+        } else if (filter === "expenses-today") {
+          await loadExpenses(true);
+        }
+      });
+    });
+
+    (async function init() {
+      await loadStock();
+      await loadItemsForSelects();
+      await loadCustomers();
+      await loadOrders();
+      await loadExpenses();
+      await loadDailySummary();
+      setInterval(loadDailySummary, 60000); // refresh summary every 60 seconds
+    })();
+  </script>
+</body>
+</html>
